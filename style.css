@@ -1,0 +1,129 @@
+*{
+    margin: 0px;
+
+}
+
+body{
+    background-color: black;
+    color: green;
+    font-size: 18px;
+}
+
+.gamebox{
+    max-width: 400px;
+    text-align: center;
+    margin: auto;
+    min-width: 400px;
+    max-width: 400px;
+
+}
+
+.gamename{
+    text-align: center;
+    width: 100%;
+    color: white;
+}
+
+
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.scoreboard{
+    float: left;
+    flex: 100%;
+    text-align: center;
+    padding-top: 50px;
+}
+
+
+.redScore{
+    float: left;
+    flex: 49%;
+    color: red;
+}
+
+.blueScore{
+    float: left;
+    flex: 49%;
+    color: blue;
+}
+
+.gameplay{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 400px;
+    padding-top: 25px;
+}
+
+/* .instructions{
+    color: green;
+    width: 400px;
+    height: 400px;
+    min-width: 400px;
+    max-width: 400px;
+    font-size: 18px;
+}
+
+for padding on instructions section only
+.forinstructions{
+    padding: 25px;
+}
+
+.forinstructions ol{
+    padding-top: 25px;
+} */
+
+.gameboard {
+    position: relative;
+    height: 396px;
+    width: 396px;
+    min-width: 396px;
+    max-width: 396px;
+    border:2px solid #008000;
+    z-index: 1;
+}
+
+.ball {
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background-color: red;
+    border: 1px solid black;
+}
+
+.paddle{
+    position: absolute;
+    height: 15px;
+    width: 50px;
+    background-color: green;
+    top:96%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* .timer  {
+    position: relative;
+    color: green;
+    width: 400px;
+    height: 400px;
+    min-width: 400px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.timer .timerObj{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+} */
+
