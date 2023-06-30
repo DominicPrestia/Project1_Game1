@@ -16,8 +16,11 @@ document.addEventListener('mousedown', (click) => {
 }, false);
 
 let paddle = document.querySelector('.paddle')
-let paddle_X = window.getComputedStyle(paddle,null).getPropertyValue("left")
+let paddle_X = window.getComputedStyle(paddle, null).getPropertyValue("left")
+let paddle_Y = window.getComputedStyle(paddle, null).getPropertyValue("top")
+let paddle_Rect = paddle.getBoundingClientRect();
 let paddle_Coord = parseInt(paddle_X)
+let paddle_Coord_Y = parseInt(paddle_Y)
 let ball = document.querySelector('.ball');
 let ball_coord = ball.getBoundingClientRect();
 let ball_Y = window.getComputedStyle(ball, null).getPropertyValue("top");
@@ -28,44 +31,31 @@ let bounds_Yaxis = window.getComputedStyle(gameboard, null).getPropertyValue("bo
 let inProgress = false;
 let y_coord = parseInt(ball_Y)
 let x_coord = parseInt(ball_X)
-let speed = 50;
+let speed = 5
+let ballspeed = .3
+let initialPaddleSpeed = .5
+let paddlespeed = initialPaddleSpeed
 let points = document.querySelector('.points')
 let y_dir = Math.round(Math.random()) ? 1 : -1
-let x_dir = getRandomAngle(.1, 2)
-let paddleDir;
-let pressed = true;
+let x_dir = Math.random()
+let paddleDir = 0;
 let id = null;
 let hitBorder = null;
 let paddleID = null;
-console.log("Ball Y: " + ball_Y)
-console.log("Ball X: " + ball_X)
-console.log("Paddle X: " + paddle_Coord)
+let paddleID2 = null;
+let keypressed = false;
+let timer = 0;
 
-function pad2(event){
+console.log("Paddle X Position: " + paddle_Coord)
+console.log("Paddle Y Position: " + paddle_Coord_Y)
+console.log("Ball Y Position: " + y_coord)
+console.log("Ball X Position: " + x_coord)
+
+function pad2(event) {
   return event.code
 }
 
 document.addEventListener("keyup", startGame)
-document.addEventListener("keydown",paddleController)
-
-
-
-function paddleController(event){
-
-  if(event.code == "ArrowLeft"){
-    paddleDir = -1;
-    paddleMovement();
-  }
-  if(event.code == "ArrowRight"){
-    paddleDir = 1;
-    paddleMovement();
-  }
-}
-
-function paddleMovement(){
-  paddle_Coord = paddle_Coord + 20 * paddleDir;
-  paddle.style.left = paddle_Coord + 'px'
-}
 
 function startGame(event) {
 
@@ -76,7 +66,32 @@ function startGame(event) {
     console.log("start game")
   }
 
+  document.addEventListener("keyup", function (event) {
+    if (event.code === "ArrowLeft") {
+      clearInterval(paddleID)
+      clearInterval(paddleID2)
+      paddleID = null
+      paddleDir = -1
+      if (paddleID == null)
+        paddleID = setInterval(paddleMovement, speed);
+    }
+    else if (event.code === "ArrowRight") {
+      clearInterval(paddleID2)
+      clearInterval(paddleID)
+      paddleID = null
+      paddleDir = 1
+      if (paddleID == null)
+        paddleID2 = setInterval(paddleMovement, speed)
+    }
+  })
+
+
   function frame() {
+
+
+
+
+
 
     document.addEventListener("keydown", function (event) {
       if (event.code === "KeyR") {
@@ -91,47 +106,71 @@ function startGame(event) {
     })
 
     if (y_coord < gameboard_pos.height && y_coord > 0 && x_coord < gameboard_pos.width && x_coord > 0) {
-      y_coord = y_coord + 1 * y_dir;
-      x_coord = x_coord + 1 * x_dir;
-    }
-    if (y_coord > gameboard_pos.height && x_coord > gameboard_pos.width) {
-      y_dir *= -1;
-      x_dir *= -1;
+      y_coord = y_coord + 1 * y_dir * ballspeed;
+      x_coord = x_coord + 1 * x_dir * ballspeed;
     }
     if (y_coord < 0 && x_coord < 0) {
       y_dir *= -1;
       x_dir *= -1;
       points.innerHTML = parseInt(points.innerHTML) + 1;
       gameboard.style.borderTopColor = "red"
-      hitBorder = setInterval(topBorderHit,200)
+      hitBorder = setInterval(topBorderHit, 200)
     }
-    if (y_coord > gameboard_pos.height) {
+    if (y_coord + 10 > gameboard_pos.height) {
       y_dir *= -1;
     }
-    if (x_coord > gameboard_pos.width) {
+    if (x_coord + 10 > gameboard_pos.width) {
       x_dir *= -1;
     }
-    if (x_coord < 0) {
+    if (x_coord - 3 < 0) {
       x_dir *= -1;
 
     }
-    if (y_coord < 0){
+    if (y_coord - 3 < 0) {
       y_dir *= -1;
       points.innerHTML = parseInt(points.innerHTML) + 1;
       gameboard.style.borderTopColor = "red"
-      hitBorder = setInterval(topBorderHit,200)
+      hitBorder = setInterval(topBorderHit, 200)
     }
 
-    y_coord = y_coord + 1 * y_dir;
-    x_coord = x_coord + 1 * x_dir;
-    ball.style.top = parseInt(y_coord) + "px";
-    ball.style.left = parseInt(x_coord) + "px";
+    if (y_coord > paddle_Coord_Y -15 && x_coord + 5 < paddle_Coord + 25 && x_coord -5 > paddle_Coord -25){
+      y_dir *=-1
+      console.log("HIT")
+    }
+    y_coord = y_coord + 1 * y_dir * ballspeed;
+    x_coord = x_coord + 1 * x_dir * ballspeed;
+    ball.style.top = y_coord + "px";
+    ball.style.left = x_coord + "px";
   }
 
 
 
 }
 
+function paddleMovement() {
+
+  if (paddle_Coord + 25 > gameboard_pos.width - 4) {
+    console.log("Stuck TOP")
+    paddlespeed = 0;
+    paddle_Coord -= 5;
+    clearInterval(paddleID2)
+  }
+  if (paddle_Coord - 25 < 0 && paddlespeed > 0) {
+    paddlespeed = 0;
+    paddle_Coord += 5;
+    console.log("Stuck bottom")
+    clearInterval(paddleID)
+    // console.log(paddleID)
+  }
+  else {
+    paddlespeed = initialPaddleSpeed
+  }
+
+
+  paddle_Coord = paddle_Coord + 1 * paddleDir * paddlespeed;
+  paddle.style.left = paddle_Coord + 'px'
+
+}
 
 function getRandomInclusive(min, max) {
   min = Math.ceil(min)
@@ -143,8 +182,8 @@ function getRandomAngle(min, max) {
   return (Math.random() * (max - min) + min) * (Math.round(Math.random()) ? 1 : -1);
 }
 
-function topBorderHit(){
-    gameboard.style.borderTopColor = "green"
-    clearInterval(hitBorder)
+function topBorderHit() {
+  gameboard.style.borderTopColor = "green"
+  clearInterval(hitBorder)
 }
 
