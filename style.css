@@ -76,6 +76,13 @@ for padding on instructions section only
 .forinstructions ol{
     padding-top: 25px;
 } */
+.gameprompt{
+    position: absolute;
+    top: 30%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+}
 
 .gameboard {
     position: relative;
